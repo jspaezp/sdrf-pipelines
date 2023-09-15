@@ -1,5 +1,14 @@
 # CONTRIBUTING
 
+# Testing
+
+We use pytest for testing.
+
+```
+pip install -r requirements-dev.txt -r requirements.txt pytest
+pytest sdrf_pipelines
+```
+
 
 
 # Code formatting

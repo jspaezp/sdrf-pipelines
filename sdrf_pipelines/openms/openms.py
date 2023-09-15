@@ -45,25 +45,22 @@ def get_openms_file_name(raw, extension_convert: str = None):
     extension_convert_dict = {}
     for extension_convert in extension_convert_list:
         current_extension, new_extension = extension_convert.split(":")
-        if current_extension not in possible_extension or new_extension not in possible_extension:
-            raise Exception(
-                "Invalid extension conversion. Please use one of the following formats: " + str(possible_extension)
-            )
-        elif current_extension in extension_convert_dict:
-            raise Exception("Invalid extension conversion. Please use only one conversion per extension")
-        else:
-            extension_convert_dict[current_extension] = new_extension
+        extension_convert_dict[current_extension] = new_extension
 
-    ext = os.path.splitext(raw)
-    current_extension = ext[1][1:]
-    if current_extension not in extension_convert_dict:
-        raise Exception(
-            "Invalid extension conversion. The current extension of the file do not match the provided extension {}".format(
-                current_extension
-            )
-        )
-    out = ext[0] + "." + extension_convert_dict[current_extension]
-    return out
+    raw_bkp = raw
+    for current_extension, target_extension in extension_convert_dict.items():
+        if raw.endswith(current_extension):
+            raw = raw.removesuffix(current_extension)
+            raw += target_extension
+            if not any(raw.endswith(x) for x in possible_extension):
+                raise RuntimeError(
+                    f"Error converting extension, {raw_bkp} -> {raw},"
+                    " the ending file does not have any of the supported"
+                    f" extensions {possible_extension}"
+                )
+            return raw
+
+    return raw
 
 
 class OpenMS:
